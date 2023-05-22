@@ -67,6 +67,17 @@ impl Pasteboard {
         }
     }
 
+    /// A method for copying to the clipboard with a specified format.
+    pub fn copy_clipboard<S: AsRef<str>>(&self, target: S, copy_type: PasteboardType) {
+
+        let contents = NSString::new(target.as_ref());
+        let ptype:NSString = copy_type.into();
+
+        unsafe {
+            let _: () = msg_send![&*self.0, setString:&*contents forType:ptype];
+        }
+    }
+
     /// Releases the receiver’s resources in the pasteboard server. It's rare-ish to need to use
     /// this, but considering this stuff happens on the Objective-C side you may need it.
     pub fn release_globally(&self) {
