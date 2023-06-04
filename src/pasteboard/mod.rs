@@ -13,11 +13,12 @@
 //! pasteboard.copy_text("My message here");
 //! ```
 
+
 use std::path::PathBuf;
 
 use objc::runtime::Object;
 use objc::{class, msg_send, sel, sel_impl};
-use objc_id::ShareId;
+use objc_id::{ShareId, Id, Shared};
 use url::Url;
 
 use crate::error::Error;
@@ -75,6 +76,22 @@ impl Pasteboard {
 
         unsafe {
             let _: () = msg_send![&*self.0, setString:&*contents forType:ptype];
+        }
+    }
+
+    /// A method for copying to the clipboard.
+    pub fn copy_files(&self, file_urls:Vec<&str>) {
+        let mut file_vec: Vec<id> = vec![];
+        for url in file_urls {
+            let temp = NSURL::with_str(url);
+            let t2: *mut Object = &*temp.objc as *const Object as *mut Object;
+            file_vec.push(t2);
+        }
+    
+        let file_array = NSArray::new(&file_vec[..]);
+
+        unsafe {
+            let _: () = msg_send![&*self.0, writeObjects:file_array];
         }
     }
 
