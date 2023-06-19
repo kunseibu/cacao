@@ -79,7 +79,7 @@ impl Pasteboard {
 
     /// A method for copying to the clipboard.
     pub fn copy_files<S: AsRef<str>>(&self, file_urls: Vec<S>) {
-        let fmt_file_urls = file_urls.iter().map(|url| String::from("file://") + url);
+        let fmt_file_urls = file_urls.iter().map(|url| String::from("file://") + url.as_ref());
         let mut file_vec: Vec<id> = vec![];
         for url in fmt_file_urls {
             let temp = NSURL::with_str(&url);
