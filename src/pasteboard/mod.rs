@@ -80,10 +80,10 @@ impl Pasteboard {
     /// A method for copying to the clipboard.
     /// It will panic when a non-existent path is provided.
     pub fn copy_files<S: AsRef<str>>(&self, file_urls: Vec<S>) {
-        let fmt_file_urls = file_urls.iter().map(|url| String::from("file://") + url.as_ref());
+        // let fmt_file_urls = file_urls.iter().map(|url| String::from("file://") + url.as_ref());
         let mut file_vec: Vec<id> = vec![];
-        for url in fmt_file_urls {
-            let temp = NSURL::with_str(&url);
+        for url in file_urls {
+            let temp = NSURL::file_url_with_path(url.as_ref());
             let t2: *mut Object = &*temp.objc as *const Object as *mut Object;
             file_vec.push(t2);
         }

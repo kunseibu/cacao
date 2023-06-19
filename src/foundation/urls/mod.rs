@@ -64,6 +64,16 @@ impl<'a> NSURL<'a> {
         }
     }
 
+    /// Initializes and returns a newly created NSURL object as a file URL with a specified path.
+    pub fn file_url_with_path(path: &str) -> Self {
+        let path_str = NSString::new(path);
+
+        Self {
+            objc: unsafe { ShareId::from_ptr(msg_send![class!(NSURL), fileURLWithPath: &*path_str]) },
+            phantom: PhantomData
+        }
+    }
+
     /// Returns the absolute string path that this URL points to.
     ///
     /// Note that if the underlying file moved, this won't be accurate - you likely want to
