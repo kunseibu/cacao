@@ -13,12 +13,11 @@
 //! pasteboard.copy_text("My message here");
 //! ```
 
-
 use std::path::PathBuf;
 
 use objc::runtime::Object;
 use objc::{class, msg_send, sel, sel_impl};
-use objc_id::{ShareId, Id, Shared};
+use objc_id::{Id, ShareId, Shared};
 use url::Url;
 
 use crate::error::Error;
@@ -70,9 +69,8 @@ impl Pasteboard {
 
     /// A method for copying to the clipboard with a specified format.
     pub fn copy_clipboard<S: AsRef<str>>(&self, target: S, copy_type: PasteboardType) {
-
         let contents = NSString::new(target.as_ref());
-        let ptype:NSString = copy_type.into();
+        let ptype: NSString = copy_type.into();
 
         unsafe {
             let _: () = msg_send![&*self.0, setString:&*contents forType:ptype];
@@ -80,18 +78,19 @@ impl Pasteboard {
     }
 
     /// A method for copying to the clipboard.
-    pub fn copy_files(&self, file_urls:Vec<&str>) {
+    pub fn copy_files(&self, file_urls: Vec<&str>) {
+        let fmt_file_urls = file_urls.iter().map(|url| String::from("file://") + url);
         let mut file_vec: Vec<id> = vec![];
-        for url in file_urls {
-            let temp = NSURL::with_str(url);
+        for url in fmt_file_urls {
+            let temp = NSURL::with_str(&url);
             let t2: *mut Object = &*temp.objc as *const Object as *mut Object;
             file_vec.push(t2);
         }
-    
+
         let file_array = NSArray::new(&file_vec[..]);
 
         unsafe {
-            let _: () = msg_send![&*self.0, writeObjects:file_array];
+            let _: () = msg_send![&*self.0, writeObjects: file_array];
         }
     }
 
